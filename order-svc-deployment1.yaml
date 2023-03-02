@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-svc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-svc
+  template:
+    metadata:
+      labels:
+        app: order-svc
+    spec:
+      containers:
+       - image: ravis2470/springboot:1
+         name: order-svc
+         ports:
+           - containerPort: 8080
+         env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: Welcome@123
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-digi.postgres.database.azure.com:5432/guest?useSSL=false
+            - name: SPRING_DATASOURCE_USERNAME
+              value: admindigi@postgres-digi
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-svc-service
+spec:
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+      nodePort: 31135
+  selector:
+    app: order-svc
+  type: NodePort
+
